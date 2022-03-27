@@ -1,12 +1,14 @@
 
 
---Описание/Пошаговая инструкция выполнения домашнего задания:
---Более подробно задание описано в материалах в личном кабинете.
---Напишите выборки для того, чтобы получить:
+--Р—Р°РїСЂРѕСЃС‹ SELECT
+
+--Р¦РµР»СЊ:
+--Р’ СЌС‚РѕРј Р”Р— РІС‹ РЅР°СѓС‡РёС‚РµСЃСЊ РїРёСЃР°С‚СЊ Р·Р°РїСЂРѕСЃС‹ SELECT.
 
 
 
---1. Все товары, в названии которых есть "urgent" или название начинается с "Animal".
+
+--1. Р’СЃРµ С‚РѕРІР°СЂС‹, РІ РЅР°Р·РІР°РЅРёРё РєРѕС‚РѕСЂС‹С… РµСЃС‚СЊ "urgent" РёР»Рё РЅР°Р·РІР°РЅРёРµ РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ "Animal".
 use [WideWorldImporters]
 	select *
 		from Warehouse.StockItems
@@ -15,7 +17,7 @@ use [WideWorldImporters]
 		OR
 		StockItemName LIKE 'Animal%'
 
---2. Поставщиков (Suppliers), у которых не было сделано ни одного заказа (PurchaseOrders).
+--2. РџРѕСЃС‚Р°РІС‰РёРєРѕРІ (Suppliers), Сѓ РєРѕС‚РѕСЂС‹С… РЅРµ Р±С‹Р»Рѕ СЃРґРµР»Р°РЅРѕ РЅРё РѕРґРЅРѕРіРѕ Р·Р°РєР°Р·Р° (PurchaseOrders).
 use [WideWorldImporters]
 	select 
 		Purchasing.Suppliers.SupplierID
@@ -27,8 +29,7 @@ use [WideWorldImporters]
 	WHERE
 		Purchasing.PurchaseOrders.PurchaseOrderID Is NULL
 
---3. Заказы (Orders) с ценой товара (UnitPrice) более 100$ либо количеством единиц (Quantity) товара более 20 штуки присутствующей датой комплектации всего заказа (PickingCompletedWhen).
-use [WideWorldImporters]
+--3. Р—Р°РєР°Р·С‹ (Orders) СЃ С†РµРЅРѕР№ С‚РѕРІР°СЂР° (UnitPrice) Р±РѕР»РµРµ 100$ Р»РёР±Рѕ РєРѕР»РёС‡РµСЃС‚РІРѕРј РµРґРёРЅРёС† (Quantity) С‚РѕРІР°СЂР° Р±РѕР»РµРµ 20 С€С‚СѓРєРё РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РµР№ РґР°С‚РѕР№ РєРѕРјРїР»РµРєС‚Р°С†РёРё РІСЃРµРіРѕ Р·Р°РєР°Р·Р° (PickingCompletedWhen).
 	select
 		Sales.Orders.OrderID
 		, Sales.OrderLines.UnitPrice
@@ -54,8 +55,7 @@ UNION
 		AND
 		Sales.Orders.PickingCompletedWhen <>''
 
---4. Заказы поставщикам (Purchasing.Suppliers), которые должны быть исполнены (ExpectedDeliveryDate) в январе 2013 года с доставкой "Air Freight" или 
---"Refrigerated Air Freight" (DeliveryMethodName) и которые исполнены (IsOrderFinalized).	
+--4. Р—Р°РєР°Р·С‹ РїРѕСЃС‚Р°РІС‰РёРєР°Рј (Purchasing.Suppliers), РєРѕС‚РѕСЂС‹Рµ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РёСЃРїРѕР»РЅРµРЅС‹ (ExpectedDeliveryDate) РІ СЏРЅРІР°СЂРµ 2013 РіРѕРґР° СЃ РґРѕСЃС‚Р°РІРєРѕР№ "Air Freight" РёР»Рё "Refrigerated Air Freight" (DeliveryMethodName) Рё РєРѕС‚РѕСЂС‹Рµ РёСЃРїРѕР»РЅРµРЅС‹ (IsOrderFinalized).	
 use [WideWorldImporters]
 	select 
 		Purchasing.Suppliers.SupplierID
@@ -73,7 +73,7 @@ use [WideWorldImporters]
 		AND
 		Application.DeliveryMethods.DeliveryMethodName IN ('Air Freight','Refrigerated Air Freight')
 
--- 5. Десять последних продаж (по дате продажи) с именем клиента и именем сотрудника, который оформил заказ (SalespersonPerson). Сделать без подзапросов.
+-- 5. Р”РµСЃСЏС‚СЊ РїРѕСЃР»РµРґРЅРёС… РїСЂРѕРґР°Р¶ (РїРѕ РґР°С‚Рµ РїСЂРѕРґР°Р¶Рё) СЃ РёРјРµРЅРµРј РєР»РёРµРЅС‚Р° Рё РёРјРµРЅРµРј СЃРѕС‚СЂСѓРґРЅРёРєР°, РєРѕС‚РѕСЂС‹Р№ РѕС„РѕСЂРјРёР» Р·Р°РєР°Р· (SalespersonPerson). РЎРґРµР»Р°С‚СЊ Р±РµР· РїРѕРґР·Р°РїСЂРѕСЃРѕРІ.
 use [WideWorldImporters]
 	select top 10
 		Sales.Orders.OrderID
@@ -87,7 +87,7 @@ use [WideWorldImporters]
 			ON Sales.Orders.ContactPersonID	= Application.People.PersonID
 ORDER BY 2 DESC
 
---6. Все ид и имена клиентов и их контактные телефоны, которые покупали товар "Chocolate frogs 250g".
+--6. Р’СЃРµ РёРґ Рё РёРјРµРЅР° РєР»РёРµРЅС‚РѕРІ Рё РёС… РєРѕРЅС‚Р°РєС‚РЅС‹Рµ С‚РµР»РµС„РѕРЅС‹, РєРѕС‚РѕСЂС‹Рµ РїРѕРєСѓРїР°Р»Рё С‚РѕРІР°СЂ "Chocolate frogs 250g".
 use [WideWorldImporters]
 	select DISTINCT
 		Sales.Customers.CustomerID
