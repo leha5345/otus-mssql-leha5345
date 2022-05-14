@@ -84,9 +84,8 @@ DECLARE @SupplierID nvarchar(10)
 		,xml.Doc2.value('(UnitPrice)[1]','numeric(20,4)') as UnitPrice
 		FROM @xmlDoc2.nodes(N'/StockItems/Item') as xml(Doc2)
 
-
 /*
-2. Выгрузить данные из таблицы StockItems в такой же xml-файл, как StockItems.xml
+2. Выгрузить данные из таблицы StockItems в таблицу
 */
 
 DECLARE @xmlDoc  xml
@@ -154,8 +153,6 @@ select
 FOR XML PATH('Item'), ROOT('StockItems'), ELEMENTS;
 
 
-
-
 /*
 3. В таблице Warehouse.StockItems в колонке CustomFields есть данные в JSON.
 Написать SELECT для вывода:
@@ -164,12 +161,11 @@ FOR XML PATH('Item'), ROOT('StockItems'), ELEMENTS;
 - CountryOfManufacture (из CustomFields)
 - FirstTag (из поля CustomFields, первое значение из массива Tags)
 */
-
-select CustomFields,* from Warehouse.StockItems
-{
-    "CountryOfManufacture": "China",
-    "Tags": ["USB Powered"]
-}
+select 
+	StockItemID
+	,StockItemName
+	,JSON_VALUE(CustomFields,'$.CountryOfManufacture') as "CountryOfManufacture",*
+from Warehouse.StockItems 
 
 /*
 4. Найти в StockItems строки, где есть тэг "Vintage".
@@ -177,20 +173,14 @@ select CustomFields,* from Warehouse.StockItems
 - StockItemID
 - StockItemName
 - (опционально) все теги (из CustomFields) через запятую в одном поле
-
-Тэги искать в поле CustomFields, а не в Tags.
-Запрос написать через функции работы с JSON.
-Для поиска использовать равенство, использовать LIKE запрещено.
-
-Должно быть в таком виде:
-... where ... = 'Vintage'
-
-Так принято не будет:
-... where ... Tags like '%Vintage%'
-... where ... CustomFields like '%Vintage%' 
 */
 
 
-напишите здесь свое решение
-*/
-*/
+select
+	StockItemID
+--	,JSON_QUERY(CustomFields, '$.Tags') as Tags
+--	,s.[key]
+	,s.value as CustomFields_Vintage
+from Warehouse.StockItems
+CROSS APPLY OPENJSON(CustomFields, '$.Tags') as s
+WHERE s.value = 'Vintage'
