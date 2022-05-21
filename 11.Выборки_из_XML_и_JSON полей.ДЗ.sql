@@ -91,7 +91,7 @@ DECLARE @SupplierID nvarchar(10)
 */
 
 select top 3
-	'red shirt XML tag t-shirt (Black) 3XXL"' as [Item/@Name],
+	'red shirt XML tag t-shirt (Black) 3XXL"' as [@Name],
 	StockItemID as [SupplierID],
 	UnitPackageID as [Package/UnitPackageID],
 	OuterPackageID as [Package/OuterPackageID],
@@ -103,6 +103,7 @@ select top 3
 	UnitPrice as [UnitPrice]
 	from Warehouse.StockItems
 FOR XML PATH('Item'), ROOT('StockItems')
+
 
 
 
