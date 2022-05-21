@@ -85,72 +85,25 @@ DECLARE @SupplierID nvarchar(10)
 		FROM @xmlDoc2.nodes(N'/StockItems/Item') as xml(Doc2)
 
 /*
+
 2. Выгрузить данные из таблицы StockItems в таблицу
+Если с выгрузкой в файл будут проблемы, то можно сделать просто SELECT c результатом в виде XML.
 */
 
-DECLARE @xmlDoc  xml
-	SELECT @xmlDoc = BulkColumn -- Считываем XML-файл в переменную
-		FROM OPENROWSET (BULK 'E:\Леха\sql\StockItems.xml',SINGLE_CLOB) as data 
---SELECT @xmlDoc as [@xmlDoc] -- Проверяем, что в @xmlDoc
-DECLARE @docHandle int
-EXEC sp_xml_preparedocument @docHandle OUTPUT, @xmlDoc
-SELECT *
-	FROM OPENXML(@docHandle, N'/StockItems/Item')
-		WITH ( 
-			 [SupplierID] nvarchar(10) 'SupplierID'
-			,[UnitPackageID] int 'Package/UnitPackageID'
-			,[OuterPackageID] int 'Package/OuterPackageID'
-			,[QuantityPerOuter] int 'Package/QuantityPerOuter'
-			,[TypicalWeightPerUnit] numeric (20,4) 'Package/TypicalWeightPerUnit'
+select top 3
+	'red shirt XML tag t-shirt (Black) 3XXL"' as [Item/@Name],
+	StockItemID as [SupplierID],
+	UnitPackageID as [Package/UnitPackageID],
+	OuterPackageID as [Package/OuterPackageID],
+	QuantityPerOuter as [Package/QuantityPerOuter],
+	TypicalWeightPerUnit as [Package/TypicalWeightPerUnit],
+	LeadTimeDays as [LeadTimeDays],
+	IsChillerStock as [IsChillerStock],
+	TaxRate as [TaxRate],
+	UnitPrice as [UnitPrice]
+	from Warehouse.StockItems
+FOR XML PATH('Item'), ROOT('StockItems')
 
-			,[LeadTimeDays] int 'LeadTimeDays'
-			,[IsChillerStock] int 'IsChillerStock'
-			,[TaxRate] numeric (20,4) 'TaxRate'
-			,[UnitPrice] numeric (20,4) 'UnitPrice'
-			)
-
--- можно вставить результат в таблицу
---DROP TABLE IF EXISTS #StockItems
-
-CREATE TABLE #StockItems(
-	[SupplierID] nvarchar(10),
-	[UnitPackageID] int,
-	[OuterPackageID] int,
-	[QuantityPerOuter] int,
-	[TypicalWeightPerUnit] numeric(20,4),
-	[LeadTimeDays] int,
-	[IsChillerStock] int,
-	[TaxRate] numeric(20,4),
-	[UnitPrice] numeric(20,4),
-)
-
-INSERT INTO #StockItems
-SELECT *
-FROM OPENXML(@docHandle, N'/StockItems/Item')
-WITH 
-	( 
-	 [SupplierID] nvarchar(10) 'SupplierID'
-	,[UnitPackageID] int 'Package/UnitPackageID'
-	,[OuterPackageID] int 'Package/OuterPackageID'
-	,[QuantityPerOuter] int 'Package/QuantityPerOuter'
-	,[TypicalWeightPerUnit] numeric (20,4) 'Package/TypicalWeightPerUnit'
-	,[LeadTimeDays] int 'LeadTimeDays'
-	,[IsChillerStock] int 'IsChillerStock'
-	,[TaxRate] numeric (20,4) 'TaxRate'
-	,[UnitPrice] numeric (20,4) 'UnitPrice'
-	)
-
-select 
-	 SupplierID		as [Item/SupplierID]
-	,UnitPackageID	as [Item/Package/UnitPackageID]
-	,OuterPackageID	as [Item/Package/OuterPackageID]
-	,QuantityPerOuter	as [Item/Package/QuantityPerOuter]
-	,LeadTimeDays	as [Item/LeadTimeDays]
-	,IsChillerStock	as [Item/IsChillerStock]
-	,TaxRate	as [Item/TaxRate]
-	,UnitPrice	as [Item/UnitPrice]
-	from #StockItems
-FOR XML PATH('Item'), ROOT('StockItems'), ELEMENTS;
 
 
 /*
