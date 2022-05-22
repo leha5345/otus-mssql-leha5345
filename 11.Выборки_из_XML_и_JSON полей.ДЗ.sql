@@ -85,13 +85,13 @@ DECLARE @SupplierID nvarchar(10)
 		FROM @xmlDoc2.nodes(N'/StockItems/Item') as xml(Doc2)
 
 /*
-
 2. Выгрузить данные из таблицы StockItems в таблицу
 Если с выгрузкой в файл будут проблемы, то можно сделать просто SELECT c результатом в виде XML.
+я выбрал просто путь через select
 */
 
 select top 3
-	'red shirt XML tag t-shirt (Black) 3XXL"' as [@Name],
+	'vstavity_luboy_text' as [@Name], -- <Item Name="vstavity_luboq_text">
 	StockItemID as [SupplierID],
 	UnitPackageID as [Package/UnitPackageID],
 	OuterPackageID as [Package/OuterPackageID],
@@ -118,8 +118,11 @@ FOR XML PATH('Item'), ROOT('StockItems')
 select 
 	StockItemID
 	,StockItemName
-	,JSON_VALUE(CustomFields,'$.CountryOfManufacture') as "CountryOfManufacture",*
+	,JSON_VALUE(CustomFields,'$.CountryOfManufacture') as CountryOfManufacture
+	,JSON_VALUE(CustomFields, '$.Tags[0]') AS Tags
+	,CustomFields
 from Warehouse.StockItems 
+
 
 /*
 4. Найти в StockItems строки, где есть тэг "Vintage".
